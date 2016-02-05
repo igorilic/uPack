@@ -4,70 +4,80 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('uPack', ['ionic', 'uPack.controllers'])
 
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-      cordova.plugins.Keyboard.disableScroll(true);
+.run(['$rootScope', 'AuthFactory', activate]);
+.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', routes]);
 
-    }
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-  });
-})
+/////////////
 
-.config(function($stateProvider, $urlRouterProvider) {
+// run method
+function activate($rootScope, AuthFactory) {
+  $rootScope.isAuthenticated = AuthFactory.isLoggedIn();
+
+  //utility method
+  $rootScope.getNumber = function(num) {
+    return new Array(num);
+  }
+}
+
+function routes($stateProvider, $urlRouterProvider, $httpProvider) {
+  // interceptor
+  $httpProvider.interceptors.push('TokenInterceptor');
+
   $stateProvider
 
     .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl'
+    controller: 'AppCtrl',
+    controllerAs: 'vm'
   })
 
-  .state('app.search', {
-    url: '/search',
+  .state('app.browse', {
+    url: '/browse',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'templates/browse.html',
+        controller: 'BrowseCtrl',
+        controllerAs: 'vm'
       }
     }
   })
 
-  .state('app.browse', {
-      url: '/browse',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/browse.html'
-        }
-      }
-    })
-    .state('app.playlists', {
-      url: '/playlists',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/playlists.html',
-          controller: 'PlaylistsCtrl'
-        }
-      }
-    })
+  .state('app.book', {
+    url: '/book/:bookId',
+     views: {
+       'menuContent': {
+         templateUrl: 'templates/book.html',
+         controller: 'BookCtrl',
+         controllerAs: 'vm'
+       }
+     }
+  })
 
-  .state('app.single', {
-    url: '/playlists/:playlistId',
+  .state('app.cart', {
+    url: '/cart',
     views: {
       'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+        templateUrl: 'templates/cart.html',
+        controller: 'CartCtrl',
+        controllerAs: 'vm'
+      }
+    }
+  })
+
+  .state('app.purchases', {
+    url: '/purchases',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/purchases.html',
+        controller: 'PurchasesCtrl',
+        controllerAs: 'vm'
       }
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
-});
+  $urlRouterProvider.otherwise('/app/browse');
+};
