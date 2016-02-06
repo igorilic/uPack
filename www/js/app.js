@@ -30,7 +30,7 @@
     }
   }
 
-  routes.$inject = ['$stateProvider', '$urlRouterProvider'];
+  routes.$inject = ['$stateProvider', '$urlRouterProvider', '$httpProvider'];
   function routes($stateProvider, $urlRouterProvider, $httpProvider) {
     // interceptor
     $httpProvider.interceptors.push('TokenInterceptor');
