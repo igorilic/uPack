@@ -4,80 +4,91 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('uPack', ['ionic', 'uPack.controllers'])
+(function() {
 
-.run(['$rootScope', 'AuthFactory', activate]);
-.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', routes]);
+  'use strict';
 
-/////////////
+  angular
+    .module('uPack', [
+      'ionic',
+      'uPack.factory',
+      'uPack.controllers'
+    ])
 
-// run method
-function activate($rootScope, AuthFactory) {
-  $rootScope.isAuthenticated = AuthFactory.isLoggedIn();
+  .run(['$rootScope', 'AuthFactory', activate])
+  .config(routes);
 
-  //utility method
-  $rootScope.getNumber = function(num) {
-    return new Array(num);
+  /////////////
+
+  // run method
+  function activate($rootScope, AuthFactory) {
+    $rootScope.isAuthenticated = AuthFactory.isLoggedIn();
+
+    //utility method
+    $rootScope.getNumber = function(num) {
+      return new Array(num);
+    }
   }
-}
 
-function routes($stateProvider, $urlRouterProvider, $httpProvider) {
-  // interceptor
-  $httpProvider.interceptors.push('TokenInterceptor');
+  routes.$inject = ['$stateProvider', '$urlRouterProvider'];
+  function routes($stateProvider, $urlRouterProvider, $httpProvider) {
+    // interceptor
+    $httpProvider.interceptors.push('TokenInterceptor');
 
-  $stateProvider
+    $stateProvider
 
-    .state('app', {
-    url: '/app',
-    abstract: true,
-    templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl',
-    controllerAs: 'vm'
-  })
+      .state('app', {
+      url: '/app',
+      abstract: true,
+      templateUrl: 'templates/menu.html',
+      controller: 'AppCtrl',
+      controllerAs: 'vm'
+    })
 
-  .state('app.browse', {
-    url: '/browse',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/browse.html',
-        controller: 'BrowseCtrl',
-        controllerAs: 'vm'
+    .state('app.browse', {
+      url: '/browse',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/browse.html',
+          controller: 'BrowseCtrl',
+          controllerAs: 'vm'
+        }
       }
-    }
-  })
+    })
 
-  .state('app.book', {
-    url: '/book/:bookId',
-     views: {
-       'menuContent': {
-         templateUrl: 'templates/book.html',
-         controller: 'BookCtrl',
-         controllerAs: 'vm'
-       }
-     }
-  })
-
-  .state('app.cart', {
-    url: '/cart',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/cart.html',
-        controller: 'CartCtrl',
-        controllerAs: 'vm'
+    .state('app.book', {
+      url: '/book/:bookId',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/book.html',
+          controller: 'BookCtrl',
+          controllerAs: 'vm'
+        }
       }
-    }
-  })
+    })
 
-  .state('app.purchases', {
-    url: '/purchases',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/purchases.html',
-        controller: 'PurchasesCtrl',
-        controllerAs: 'vm'
+    .state('app.cart', {
+      url: '/cart',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/cart.html',
+          controller: 'CartCtrl',
+          controllerAs: 'vm'
+        }
       }
-    }
-  });
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/browse');
-};
+    })
+
+    .state('app.purchases', {
+      url: '/purchases',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/purchases.html',
+          controller: 'PurchasesCtrl',
+          controllerAs: 'vm'
+        }
+      }
+    });
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/app/browse');
+  };
+})();
